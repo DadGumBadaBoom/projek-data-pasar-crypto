@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, Wallet, LineChart, Users, Settings, Bell, Menu, TrendingUp, Compass, Sun, Moon, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 
 const navItems = [
     { href: '/', icon: Compass, label: 'Screener' },
@@ -140,6 +140,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left" className="bg-card w-72 p-0">
+                    <SheetTitle className="sr-only">Menu Navigasi</SheetTitle>
                     <SidebarContent />
                 </SheetContent>
             </Sheet>
@@ -167,5 +168,3 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 }
 
 export default AppLayout;
-
-    
