@@ -1,0 +1,18 @@
+untuk memulai
+1. ekstrak dulu foldernya
+2. buka cmd di foldernya
+3. ketik npm install lalu enter
+4. lalu ketik npm run dev. Pastikan muncul tulisan seperti dibawah
+
+    > next dev --turbopack -p 9002
+
+   ▲ Next.js 15.5.2 (Turbopack)
+   - Local:        http://localhost:9002
+   - Network:      http://192.168.137.1:9002
+
+ ✓ Starting...
+ ✓ Ready in 1738ms
+
+5. buka browser ketik http://localhost:9002
+
+nb: kalau terjadi error saat npm install. buka browser cari node.js lalu download untuk windows dan install
