@@ -5,9 +5,25 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Wallet, LineChart, Users, Settings, Bell, Menu, TrendingUp, Compass, Sun, Moon, X } from 'lucide-react';
+import { Search, Wallet, LineChart, Users, Settings, Bell, Menu, TrendingUp, Compass, Sun, Moon, X, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const navItems = [
     { href: '/', icon: Compass, label: 'Screener' },
@@ -150,13 +166,73 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon">
-              <Bell />
-            </Button>
-            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">Hubungkan Dompet</Button>
-            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
-              <span className="font-bold">G</span>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Bell />
+                   <span className="sr-only">Notifikasi</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Notifikasi</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>TROLL naik 5% dalam 1 jam terakhir.</DropdownMenuItem>
+                <DropdownMenuItem>Paus baru terdeteksi untuk SPX.</DropdownMenuItem>
+                <DropdownMenuItem>Peringatan: FWOG turun 15%.</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full">Hubungkan Dompet</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Hubungkan Dompet Anda</DialogTitle>
+                  <DialogDescription>
+                    Pilih salah satu penyedia dompet di bawah ini untuk melanjutkan.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <Button variant="outline" className="justify-start gap-4">
+                     <Wallet /> MobyWallet
+                  </Button>
+                   <Button variant="outline" className="justify-start gap-4">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1-.9-2-2-2Z"/></svg>
+                    Coinbase Wallet
+                  </Button>
+                   <Button variant="outline" className="justify-start gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M20 12V8H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h12v-4"/><path d="m18 12 1.5-2.5L21 12l-1.5 2.5L18 12Z"/><path d="m12 12 1.5-2.5L15 12l-1.5 2.5L12 12Z"/></svg>
+                    MetaMask
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                 <div className="cursor-pointer w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                  <span className="font-bold">G</span>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profil</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Pengaturan</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <span>Keluar</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
           </div>
         </header>
 
