@@ -1,22 +1,23 @@
 
 'use client'
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import Image from 'next/image';
 
-const tokens = [
-  { rank: 1, name: 'TROLL', price: '$0.1821', mcap: '$181.90M', change: '+2.57%', changeValue: 2.57, whales: 30, supplyBought: '0.62%' },
-  { rank: 2, name: 'SPX', price: '$1.4144', mcap: '$164.30M', change: '+6.25%', changeValue: 6.25, whales: 11, supplyBought: '0.11%' },
-  { rank: 3, name: 'GDP', price: '$0.0...1114', mcap: '$111.43K', change: '+1500.49%', changeValue: 1500.49, whales: 17, supplyBought: '13.91%' },
-  { rank: 4, name: 'POLYAGENT', price: '$0.0...3280', mcap: '$328.08K', change: '+187.29%', changeValue: 187.29, whales: 16, supplyBought: '6.33%' },
-  { rank: 5, name: 'IRYNA', price: '$0.002603', mcap: '$2.60M', change: '-43.90%', changeValue: -43.90, whales: 28, supplyBought: '2.48%' },
-  { rank: 6, name: 'FWOG', price: '$0.0415', mcap: '$40.46M', change: '+0.86%', changeValue: 0.86, whales: 12, supplyBought: '0.38%' },
+const initialTokens = [
+  { rank: 1, name: 'TROLL', price: 0.1821, mcap: 181900000, change: 2.57, whales: 30, supplyBought: 0.62 },
+  { rank: 2, name: 'SPX', price: 1.4144, mcap: 164300000, change: 6.25, whales: 11, supplyBought: 0.11 },
+  { rank: 3, name: 'GDP', price: 0.0000001114, mcap: 111430, change: 1500.49, whales: 17, supplyBought: 13.91 },
+  { rank: 4, name: 'POLYAGENT', price: 0.0000003280, mcap: 328080, change: 187.29, whales: 16, supplyBought: 6.33 },
+  { rank: 5, name: 'IRYNA', price: 0.002603, mcap: 2600000, change: -43.90, whales: 28, supplyBought: 2.48 },
+  { rank: 6, name: 'FWOG', price: 0.0415, mcap: 40460000, change: 0.86, whales: 12, supplyBought: 0.38 },
 ];
 
-const chartData = [
+const initialChartData = [
   { name: 'Jan', value: 400 },
   { name: 'Feb', value: 300 },
   { name: 'Mar', value: 600 },
@@ -25,7 +26,85 @@ const chartData = [
   { name: 'Jun', value: 700 },
 ];
 
+const formatCurrency = (value: number) => {
+    if (value < 0.001) {
+        return `$0.0...${String(value).split('.').pop()?.substring(0, 4) || ''}`;
+    }
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 4 }).format(value);
+}
+
+const formatMarketCap = (value: number) => {
+    if (value >= 1000000000) {
+        return `$${(value / 1000000000).toFixed(2)}B`;
+    }
+    if (value >= 1000000) {
+        return `$${(value / 1000000).toFixed(2)}M`;
+    }
+    if (value >= 1000) {
+        return `$${(value / 1000).toFixed(2)}K`;
+    }
+    return `$${value.toFixed(2)}`;
+}
+
+
 export default function DashboardPage() {
+  const [tokens, setTokens] = useState(initialTokens.map(t => ({...t})));
+  const [chartData, setChartData] = useState(initialChartData);
+  const [summary, setSummary] = useState({
+    tvl: 125700000,
+    volume: 2300000,
+    activeWhales: 1254,
+    tvlChange: 5.2,
+    volumeChange: -10.1,
+    newWhales: 87,
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Simulate token data update
+      setTokens(prevTokens => 
+        prevTokens.map(token => {
+          const changePercent = (Math.random() - 0.5) * 5; // -2.5% to +2.5%
+          const newPrice = token.price * (1 + changePercent / 100);
+          const newMcap = token.mcap * (1 + changePercent / 100);
+          const newChange = token.change + changePercent;
+          return { ...token, price: newPrice, mcap: newMcap, change: newChange };
+        })
+      );
+
+      // Simulate chart data update
+      setChartData(prevData => {
+        const newData = [...prevData];
+        const lastPoint = newData[newData.length - 1];
+        const newPointValue = lastPoint.value * (1 + (Math.random() - 0.45) * 0.1); // Fluctuate more gently
+        newData.push({ name: new Date().toLocaleTimeString('id-ID').split('.')[0], value: Math.max(100, newPointValue) });
+        if (newData.length > 10) {
+          newData.shift();
+        }
+        return newData;
+      });
+
+      // Simulate summary cards update
+      setSummary(prevSummary => {
+         const tvlChange = (Math.random() - 0.5) * 2;
+         const volumeChange = (Math.random() - 0.5) * 5;
+         const newWhalesChange = Math.floor(Math.random() * 5) - 2;
+         return {
+            tvl: prevSummary.tvl * (1 + tvlChange / 100),
+            volume: prevSummary.volume * (1 + volumeChange / 100),
+            activeWhales: prevSummary.activeWhales + newWhalesChange,
+            tvlChange: prevSummary.tvlChange + tvlChange,
+            volumeChange: prevSummary.volumeChange + volumeChange,
+            newWhales: prevSummary.newWhales + newWhalesChange,
+         }
+      })
+
+    }, 3000); // Update every 3 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+
   return (
     <main className="flex-1 p-6 overflow-y-auto">
       <h2 className="text-3xl font-bold mb-6">Dasbor Analitik</h2>
@@ -36,8 +115,10 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Nilai Terkunci</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$125.7M</div>
-            <p className="text-xs text-green-400">+5.2% dari kemarin</p>
+            <div className="text-2xl font-bold">{formatMarketCap(summary.tvl)}</div>
+            <p className={`text-xs ${summary.tvlChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {summary.tvlChange >= 0 ? '+' : ''}{summary.tvlChange.toFixed(1)}% dari kemarin
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -45,8 +126,10 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Volume 24 Jam</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$2.3M</div>
-            <p className="text-xs text-red-400">-10.1% dari kemarin</p>
+            <div className="text-2xl font-bold">{formatMarketCap(summary.volume)}</div>
+            <p className={`text-xs ${summary.volumeChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                {summary.volumeChange >= 0 ? '+' : ''}{summary.volumeChange.toFixed(1)}% dari kemarin
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -54,8 +137,8 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Paus Aktif</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,254</div>
-            <p className="text-xs text-green-400">+87 paus baru</p>
+            <div className="text-2xl font-bold">{new Intl.NumberFormat('id-ID').format(summary.activeWhales)}</div>
+            <p className="text-xs text-green-400">+{new Intl.NumberFormat('id-ID').format(summary.newWhales)} paus baru</p>
           </CardContent>
         </Card>
         <Card>
@@ -73,7 +156,7 @@ export default function DashboardPage() {
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Aktivitas Pasar</CardTitle>
-            <CardDescription>Pergerakan nilai aset selama 6 bulan terakhir</CardDescription>
+            <CardDescription>Pergerakan nilai aset secara real-time</CardDescription>
           </CardHeader>
           <CardContent className="h-[300px] w-full p-0">
               <ResponsiveContainer width="100%" height="100%">
@@ -86,7 +169,7 @@ export default function DashboardPage() {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={['dataMin - 100', 'dataMax + 100']} />
                   <Tooltip 
                     contentStyle={{ 
                         backgroundColor: 'hsl(var(--card))',
@@ -114,11 +197,11 @@ export default function DashboardPage() {
                        <Image src={`https://picsum.photos/seed/${token.name}/32`} alt={token.name} width={32} height={32} className="w-8 h-8 rounded-full" data-ai-hint="logo" />
                        <div>
                             <div className="font-bold">{token.name}</div>
-                            <div className="text-xs text-muted-foreground">{token.price}</div>
+                            <div className="text-xs text-muted-foreground">{formatCurrency(token.price)}</div>
                        </div>
                     </div>
-                   <div className={`text-sm font-medium ${token.changeValue > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {token.change}
+                   <div className={`text-sm font-medium ${token.change > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {token.change.toFixed(2)}%
                    </div>
                 </div>
               ))}
@@ -148,7 +231,7 @@ export default function DashboardPage() {
             </TableHeader>
             <TableBody>
               {tokens.map((token) => (
-                <TableRow key={token.rank} className="hover:bg-secondary/50">
+                <TableRow key={token.rank} className="hover:bg-secondary/50 tabular-nums">
                   <TableCell>{token.rank}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3 font-medium">
@@ -156,11 +239,11 @@ export default function DashboardPage() {
                        {token.name}
                     </div>
                   </TableCell>
-                  <TableCell>{token.price}</TableCell>
-                  <TableCell>{token.mcap}</TableCell>
-                  <TableCell className={token.changeValue > 0 ? 'text-green-400' : 'text-red-400'}>{token.change}</TableCell>
+                  <TableCell>{formatCurrency(token.price)}</TableCell>
+                  <TableCell>{formatMarketCap(token.mcap)}</TableCell>
+                  <TableCell className={token.change > 0 ? 'text-green-400' : 'text-red-400'}>{token.change.toFixed(2)}%</TableCell>
                   <TableCell>{token.whales}</TableCell>
-                  <TableCell>{token.supplyBought}</TableCell>
+                  <TableCell>{token.supplyBought.toFixed(2)}%</TableCell>
                   <TableCell className="text-right">
                     <Button variant="outline" size="sm">Lihat</Button>
                   </TableCell>
@@ -174,3 +257,5 @@ export default function DashboardPage() {
     </main>
   );
 }
+
+    
