@@ -70,7 +70,7 @@ export default function Home() {
               <div className="flex items-center gap-4">
                 <Logo className="w-16 h-16 text-primary" />
                 <h1 className="text-4xl font-bold tracking-tighter font-headline sm:text-5xl md:text-6xl lg:text-7xl">
-                  ScreenVoyager
+                  MobyScreener
                 </h1>
               </div>
               <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
@@ -122,7 +122,7 @@ export default function Home() {
         </div>
       </main>
       <footer className="flex items-center justify-center w-full h-24 border-t">
-        <p className="text-muted-foreground">© {new Date().getFullYear()} ScreenVoyager. All rights reserved.</p>
+        <p className="text-muted-foreground">© {new Date().getFullYear()} MobyScreener. All rights reserved.</p>
       </footer>
     </div>
   );

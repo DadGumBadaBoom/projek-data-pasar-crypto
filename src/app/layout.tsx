@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'ScreenVoyager',
+  title: 'MobyScreener',
   description: 'Analyze any webpage with the power of AI',
 };
 
